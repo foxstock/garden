@@ -51,5 +51,6 @@ if __name__ == '__main__':
     out_txt=".\\"+data["out_filename"]
     txt_path=dir_path+'\\'+txts_path+'\\'
     txt_list=dir_list(txt_path,["txt"])
+    txt_list.sort()
     list_to_txt(txt_list,dir_path+"\\txts_list.txt")
     merge_all_txt(out_txt,txt_list)

@@ -16,3 +16,4 @@ Scripts/*
 *.csv
 *.xls
 .DS_Store
+*.bak

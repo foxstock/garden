@@ -36,11 +36,16 @@ def get_all_file_paths(directory):
 
 def step1():
     """ 下載zip並解壓縮為xls """
+    #url_list=[
+    #    ["dea_fut_xls_2019.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2019.zip"],
+    #    ["dea_fut_xls_2020.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2020.zip"],
+    #    ["dea_fut_xls_2021.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2021.zip"],
+    #    ["dea_fut_xls_2022.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2022.zip"],
+    #    ["dea_fut_xls_2023.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2023.zip"],
+    #    ["dea_fut_xls_2024.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2024.zip"]
+    #] # edited on 2024/01/22
     url_list=[
-        ["dea_fut_xls_2019.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2019.zip"],
-        ["dea_fut_xls_2020.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2020.zip"],
-        ["dea_fut_xls_2021.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2021.zip"],
-        ["dea_fut_xls_2022.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2022.zip"],
+        ["dea_fut_xls_2024.zip","https://www.cftc.gov/files/dea/history/dea_fut_xls_2024.zip"]
     ]
     zip_folder='SOURCE_ZIP/'
     # 如果沒有 SOURCE_ZIP 資料夾就新增
@@ -70,7 +75,7 @@ def step2():
     source_csv_folder='SOURCE_CSV/'
     if not os.path.exists(source_csv_folder):
         os.makedirs(source_csv_folder)
-    XLS_arr=['FUT86_06','FUT07_14','FUT15_16','FUT17','FUT18','dea_fut_xls_2019','dea_fut_xls_2020','dea_fut_xls_2021','dea_fut_xls_2022']
+    XLS_arr=['FUT86_06','FUT07_14','FUT15_16','FUT17','FUT18','dea_fut_xls_2019','dea_fut_xls_2020','dea_fut_xls_2021','dea_fut_xls_2022','dea_fut_xls_2023','dea_fut_xls_2024']
     for xi in XLS_arr:
         source_xls=source_xls_folder+xi+'.xls'
         dest_csv=source_csv_folder+xi+'.csv'
@@ -97,7 +102,7 @@ def step3():
     temp_csv_folder='TEMP_CSV/'
     if not os.path.exists(temp_csv_folder):
         os.makedirs(temp_csv_folder)
-    XLS_arr=['FUT86_06','FUT07_14','FUT15_16','FUT17','FUT18','dea_fut_xls_2019','dea_fut_xls_2020','dea_fut_xls_2021','dea_fut_xls_2022']
+    XLS_arr=['FUT86_06','FUT07_14','FUT15_16','FUT17','FUT18','dea_fut_xls_2019','dea_fut_xls_2020','dea_fut_xls_2021','dea_fut_xls_2022','dea_fut_xls_2023','dea_fut_xls_2024']
     want_arr=[]
     for ti in arr_as.want_arr:
         if ti[0] not in want_arr:
@@ -123,7 +128,7 @@ def step3():
 
 def step4():
     """ description """
-    XLS_arr=['FUT86_06','FUT07_14','FUT15_16','FUT17','FUT18','dea_fut_xls_2019','dea_fut_xls_2020','dea_fut_xls_2021','dea_fut_xls_2022']
+    XLS_arr=['FUT86_06','FUT07_14','FUT15_16','FUT17','FUT18','dea_fut_xls_2019','dea_fut_xls_2020','dea_fut_xls_2021','dea_fut_xls_2022','dea_fut_xls_2023','dea_fut_xls_2024']
     dest_csv='TEMP_CSV/FUT_ALL.csv'
     with open(dest_csv,'w',encoding='utf-8') as df:
         df.write('Market_and_Exchange_Names,Report_Date,Open_Interest_All,NonComm_Positions_Long_All,NonComm_Positions_Short_All\n')

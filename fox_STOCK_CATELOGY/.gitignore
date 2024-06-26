@@ -1,0 +1,17 @@
+__pycache__/*
+build/*
+dist/*
+*.pyc
+Lib/*
+Scripts/*
+*.spec
+*.exe
+*.zip
+*.cfg
+*.bat
+*.log
+hide.txt
+.DS_Store
+FINAL/*
+*.csv
+*.rar

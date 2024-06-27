@@ -1,5 +1,5 @@
 import time,re,os,pathlib,time,configparser,json
-from sys import exit,argv
+from sys import exit,argv,executable
 from datetime import datetime
 from time import gmtime,strftime
 from WindowMgr import *
@@ -63,7 +63,7 @@ def scrapy():
         if len(source_code)<500:
             print("LENDX 無數據或尚未更新...")
             driver.quit()
-            #exit(0)
+            exit(0)
             return True
         #print(source_code)
         json_str=re.findall(r"<pre>(.*?)</pre>",str(source_code))
@@ -88,12 +88,17 @@ def scrapy():
                 if size < 2048:
                     os.remove(file_path)
                     print(f'已刪除0KB檔案：{filename}')
+        exit(0)
         return True
     except Exception as e:
         print('執行期間發生不可預期之錯誤，強制終止程式...10秒後採集程式會重新執行。')
         driver.quit()
         return False
 if __name__ == "__main__":
+    exec_path_full=executable #獲取完整執行檔路徑
+    exec_path_ls=exec_path_full.split("\\")
+    exec_path=exec_path_full.replace(exec_path_ls[-1],"")
+    print(f"執行檔所在路徑: {exec_path}")
     #先檢查是否有先前還沒結束的task
     #將當前視窗名設為"CLENDX-DAILY"
     w=WindowMgr()
@@ -111,10 +116,10 @@ if __name__ == "__main__":
     #將DOS視窗名設為"MTSL-DAILY"
     w.find_window_wildcard("C-L-E-N-D-X-T-E-M-P")
     w.set_cmd_title("CLENDX-DAILY") 
-    base_dir = os.getcwd()
-    config=ini_to_dict(f"{base_dir}\\setting.ini")
+    base_dir = exec_path
+    config=ini_to_dict(f"{exec_path}\\setting.ini")
     #print(config)
-    FINAL_CSV_DIR = base_dir + "\\FINAL\\"
+    FINAL_CSV_DIR = base_dir + "FINAL\\"
     # CREATE FINAL CSV DIR IF NOT EXIST
     create_dir_if_not_exist(FINAL_CSV_DIR)
     if len(argv)>1:

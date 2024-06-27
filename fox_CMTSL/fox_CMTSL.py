@@ -1,5 +1,5 @@
 import time,re,os,pathlib,time,configparser
-from sys import exit,argv
+from sys import exit,argv,executable
 from datetime import datetime
 from time import gmtime,strftime
 from WindowMgr import *
@@ -49,11 +49,13 @@ def utf8len(s,encode_type):
     return len(s.encode(encode_type))
 
 def compare_two_txt_content(txt1,txt2):
-    #if utf8len(txt1,encode_type)!=utf8len(txt2,encode_type): # 若長度不同,視為有變
-    #    return False
-    #else:
-    for i,v in enumerate(txt1): # 長度相同,逐字比對內容
-        if v!=txt2[i]: return False
+    if utf8len(txt1,'Big5')!=utf8len(txt2,'Big5'): # 若長度不同,視為有變
+        #print('長度不同,視為有變') #DEBUG
+        return False
+    else:
+        for i,v in enumerate(txt1): # 長度相同,逐字比對內容
+            #print(txt2[i]) #DEBUG
+            if v!=txt2[i]: return False
     return True # 逐字比對內容無異,視為無變
 
 def scrapy():
@@ -109,7 +111,7 @@ def scrapy():
         if len(inner_html)<70000: 
             print("證交所融券借券賣出餘額無數據或尚未更新...")
             driver.quit()
-            #exit(0)
+            exit(0)
             return True
 
         select_element = Select(driver.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/main/div[2]/hgroup/div/div[1]/select'))  
@@ -178,6 +180,7 @@ def scrapy():
         print('借券賣出: '+today_str+toHHMMSS_str+'.csv 下載完成!')
         ### 清理 0KB檔案
         # 遍歷資料夾中的所有檔案
+        #print("清理 0KB檔案") #DEBUG
         for filename in os.listdir(FINAL_CSV_DIR):
             file_path = os.path.join(FINAL_CSV_DIR, filename)
             # 確保是檔案而不是資料夾
@@ -191,6 +194,7 @@ def scrapy():
         if config['SETTING.delete_same_content_at_same_day'] and os.path.isfile(FINAL_CSV_DIR+today_str+toHHMMSS_str+'.csv'):
             # 清除同日期相同內容的文字檔，如果 SETTING.delete_same_content_at_same_day 為 True 的話
             # 遍歷資料夾中的所有檔案
+            #print("遍歷資料夾中的所有檔案") #DEBUG
             for filename in os.listdir(FINAL_CSV_DIR):
                 file_path = os.path.join(FINAL_CSV_DIR, filename)
                 #print(file_path)
@@ -199,17 +203,20 @@ def scrapy():
                     tmp_date=str(file_path).split("\\")[-1][:8] # a=yyyymmdd
                     # 比對日期是否相同，若日期相同但檔名不同則比對文字檔內容，若文字檔內容相同則刪除先前已存在的文字檔，保留剛下載的文字檔，若不相同則不做刪除。
                     if tmp_date==today_str and file_path!=FINAL_CSV_DIR+today_str+toHHMMSS_str+'.csv':
-                        #print(f"compare {file_path}")
+                        #print(f"compare {file_path}") #DEBUG
                          # 比對兩個文字檔
                         txt1,txt2="",""
                         with open(FINAL_CSV_DIR+today_str+toHHMMSS_str+'.csv','r') as f:
                             txt1=f.read()
+                            #print(f"read txt1 ") #DEBUG
                         with open(file_path,'r') as f:
                             txt2=f.read()
+                            #print(f"read txt2 ") #DEBUG
                         if compare_two_txt_content(txt1,txt2):
                             # 若文字檔內容相同則刪除先前已存在的文字檔
                             os.remove(file_path)
                             print(f"文字檔內容相同已刪除:{file_path}")
+        exit(0) #結束程式
         return True
     except Exception as e:
         print('執行期間發生不可預期之錯誤，強制終止程式...10秒後採集程式會重新執行。')
@@ -218,6 +225,10 @@ def scrapy():
 
 
 if __name__ == "__main__":
+    exec_path_full=executable #獲取完整執行檔路徑
+    exec_path_ls=exec_path_full.split("\\")
+    exec_path=exec_path_full.replace(exec_path_ls[-1],"")
+    print(f"執行檔所在路徑: {exec_path}")
     #先檢查是否有先前還沒結束的task
     #將當前視窗名設為"CMTSL-DAILY"
     w=WindowMgr()
@@ -235,10 +246,10 @@ if __name__ == "__main__":
     #將DOS視窗名設為"MTSL-DAILY"
     w.find_window_wildcard("C-M-T-S-L-T-E-M-P")
     w.set_cmd_title("CMTSL-DAILY")        
-    base_dir = os.getcwd()
-    config=ini_to_dict(f"{base_dir}\\setting.ini")
+    base_dir = exec_path
+    config=ini_to_dict(f"{exec_path}\\setting.ini")
     #print(config)
-    FINAL_CSV_DIR = base_dir + "\\FINAL\\"
+    FINAL_CSV_DIR = base_dir + "FINAL\\"
     # CREATE FINAL CSV DIR IF NOT EXIST
     create_dir_if_not_exist(FINAL_CSV_DIR)
     if len(argv)>1:

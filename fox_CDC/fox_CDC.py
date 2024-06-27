@@ -1,5 +1,5 @@
 import time,re,os,pathlib,time,configparser,requests
-from sys import exit,argv
+from sys import exit,argv,executable
 from datetime import datetime
 from time import gmtime,strftime
 from WindowMgr import *
@@ -82,11 +82,13 @@ def utf8len(s,encode_type):
     return len(s.encode(encode_type))
 
 def compare_two_txt_content(txt1,txt2):
-    #if utf8len(txt1,encode_type)!=utf8len(txt2,encode_type): # 若長度不同,視為有變
-    #    return False
-    #else:
-    for i,v in enumerate(txt1): # 長度相同,逐字比對內容
-        if v!=txt2[i]: return False
+    if utf8len(txt1,'Big5')!=utf8len(txt2,'Big5'): # 若長度不同,視為有變
+        #print('長度不同,視為有變') #DEBUG
+        return False
+    else:
+        for i,v in enumerate(txt1): # 長度相同,逐字比對內容
+            #print(txt2[i]) #DEBUG
+            if v!=txt2[i]: return False
     return True # 逐字比對內容無異,視為無變
 
 def scrapy():
@@ -223,7 +225,7 @@ def scrapy():
                     print("上櫃當日沖銷無數據或尚未更新...")
                     driver.quit()
                     #time.sleep(2)
-                    #exit(0)
+                    exit(0)
                     return True
                 else:
                     tmp_url="https://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat_result.php?l=zh-tw&d="+ac_to_cc(tmp_day)+"&s=0,asc,0&o=htm"
@@ -293,6 +295,7 @@ def scrapy():
                             # 若文字檔內容相同則刪除先前已存在的文字檔
                             os.remove(file_path)
                             print(f"文字檔內容相同已刪除:{file_path}")
+        exit(0)
         return True
     except Exception as e:
         print('執行期間發生不可預期之錯誤，強制終止程式...10秒後採集程式會重新執行。')
@@ -300,6 +303,10 @@ def scrapy():
         return False
 
 if __name__ == "__main__":
+    exec_path_full=executable #獲取完整執行檔路徑
+    exec_path_ls=exec_path_full.split("\\")
+    exec_path=exec_path_full.replace(exec_path_ls[-1],"")
+    print(f"執行檔所在路徑: {exec_path}")
     #先檢查是否有先前還沒結束的task
     #將當前視窗名設為"CDC-DAILY"
     w=WindowMgr()
@@ -317,10 +324,10 @@ if __name__ == "__main__":
     #將DOS視窗名設為"MTSL-DAILY"
     w.find_window_wildcard("C-D-C-T-E-M-P")
     w.set_cmd_title("CDC-DAILY") 
-    base_dir = os.getcwd()
-    config=ini_to_dict(f"{base_dir}\\setting.ini")
+    base_dir = exec_path
+    config=ini_to_dict(f"{exec_path}\\setting.ini")
     #print(config)
-    FINAL_CSV_DIR = base_dir + "\\FINAL\\"
+    FINAL_CSV_DIR = base_dir + "FINAL\\"
     # CREATE FINAL CSV DIR IF NOT EXIST
     create_dir_if_not_exist(FINAL_CSV_DIR)
     if len(argv)>1:

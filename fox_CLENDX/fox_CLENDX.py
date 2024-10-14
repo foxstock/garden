@@ -39,7 +39,7 @@ def add_slash_to_date_str(date_str):
     return f"{date_str[0:4]}/{date_str[4:6]}/{date_str[6:8]}"
 
 def scrapy():
-    global config,today_str,toHHMMSS_str,FINAL_CSV_DIR,url_dict
+    global config,today_str,toHHMMSS_str,FINAL_CSV_DIR,url_dict,run_count,pause_second
     try:
         service = Service(config['SETTING.chromedriver_loc'])
         # 初始化 Chrome 選項
@@ -91,7 +91,10 @@ def scrapy():
         exit(0)
         return True
     except Exception as e:
-        print('執行期間發生不可預期之錯誤，強制終止程式...10秒後採集程式會重新執行。')
+        if run_count==2:
+            print(f'程式已執行2次，執行期間發生不可預期之錯誤，強制終止程式...。')
+        else:    
+            print(f'執行期間發生不可預期之錯誤，強制終止程式...{pause_second}秒後採集程式會重新執行。')
         driver.quit()
         return False
 if __name__ == "__main__":
@@ -136,10 +139,13 @@ if __name__ == "__main__":
         "證交所首頁":"https://www.twse.com.tw/zh/index.html",
         "證交所LENDX":f"https://www.twse.com.tw/rwd/zh/lending/TWT72U?date={today_str}"
     }
+    run_count=0
+    pause_second=20
     while 1:
         result=scrapy()
+        run_count=run_count+1
         #print(f"result:{result}")
-        if result:
+        if result or run_count==2:
             exit(0)
         else:
-            time.sleep(10)
+            time.sleep(20)

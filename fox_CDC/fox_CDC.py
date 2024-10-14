@@ -92,7 +92,7 @@ def compare_two_txt_content(txt1,txt2):
     return True # 逐字比對內容無異,視為無變
 
 def scrapy():
-    global config,last3days,today_str,toHHMMSS_str,FINAL_CSV_DIR,url_dict
+    global config,last3days,today_str,toHHMMSS_str,FINAL_CSV_DIR,url_dict,run_count,pause_second
     try:
         service = Service(config['SETTING.chromedriver_loc'])
         # 初始化 Chrome 選項
@@ -298,7 +298,10 @@ def scrapy():
         exit(0)
         return True
     except Exception as e:
-        print('執行期間發生不可預期之錯誤，強制終止程式...10秒後採集程式會重新執行。')
+        if run_count==2:
+            print(f'程式已執行2次，執行期間發生不可預期之錯誤，強制終止程式...。')
+        else:    
+            print(f'執行期間發生不可預期之錯誤，強制終止程式...{pause_second}秒後採集程式會重新執行。')
         driver.quit()
         return False
 
@@ -350,10 +353,13 @@ if __name__ == "__main__":
     "證交所每日當日沖銷交易標的":"https://www.twse.com.tw/zh/trading/day-trading.html",
     "上櫃現股當沖":"https://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat.php?l=zh-tw"
     }
+    run_count=0
+    pause_second=20
     while 1:
         result=scrapy()
+        run_count=run_count+1
         #print(f"result:{result}")
-        if result:
+        if result or run_count==2:
             exit(0)
         else:
-            time.sleep(10)
+            time.sleep(20)

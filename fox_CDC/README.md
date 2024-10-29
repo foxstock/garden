@@ -24,3 +24,8 @@ ajax loading
 div.per-page select value=-1
 loading All
 div.class="rwd-table dragscroll F2 R4_" 
+
+## 輸出CSV檔格式範例:
+20241028223012.csv
+資料日期,證券代號,當日沖銷交易成交股數,當日沖銷交易買進成交金額,當日沖銷交易賣出成交金額
+20240614,0050,435000,77688600,77781650

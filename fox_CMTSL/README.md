@@ -11,3 +11,10 @@
 "上櫃融券借券賣出餘額":"https://www.tpex.org.tw/zh-tw/mainboard/trading/margin-trading/sbl.html"
 
 ## action分析:
+
+
+## 輸出CSV檔格式範例:
+20241028223012.csv
+年月日,股票代號,當日賣出,當日還券,當日調整,當日餘額,次一營業日可限額,mktype
+2024/10/28,0050,80000,0,0,25176000,3633594,0
+

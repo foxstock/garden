@@ -164,8 +164,6 @@ def scrapy():
                 # 取得該 DIV 元素的內容 HTML 原始碼
                 inner_html = div_element.get_attribute('innerHTML')
 
-
-
                 if len(inner_html)<55000:
                     # 今日無數據或尚未更新
                     print("證交所每日當日沖銷無數據或尚未更新...")
@@ -199,43 +197,36 @@ def scrapy():
                 #exit(0)
                 return False
         time.sleep(5)
+        
+        # 處理上櫃現股當沖
+        driver.get(url_dict["上櫃現股當沖"])
+        time.sleep(5)
+        button = driver.find_element(By.XPATH,"//*[contains(text(),'列印/匯出HTML')]")
+        button.click() #按下 列印/匯出HTML
+        driver.switch_to.window(driver.window_handles[1])
         for tmp_day in last3days:
             try:
                 yy=tmp_day[0:4]
                 mm=str(int(tmp_day[4:6]))
                 dd=str(int(tmp_day[6:8]))
 
-                driver.get(url_dict["上櫃現股當沖"])
+                driver.get(f"https://www.tpex.org.tw/www/zh-tw/intraday/stat?type=Daily&date={yy}%2F{mm}%2F{dd}&id=&response=html")
                 time.sleep(5)
-                input_date = driver.find_element(By.NAME,'input_date')
-                #input_date.clear()
-                for _ in range(10):
-                    input_date.send_keys(Keys.BACKSPACE)
-                input_date.send_keys(ac_to_cc(tmp_day))
-                input_date.send_keys(Keys.TAB)
-                time.sleep(5)
-                div_element = driver.find_element(By.CLASS_NAME, 'rpt-content')
-                # 取得該 DIV 元素的內容 HTML 原始碼
+
+                div_element = driver.find_element(By.TAG_NAME, 'html')
                 inner_html = div_element.get_attribute('innerHTML')
-                #with open("400.txt","w",encoding="utf-8") as f:
-                #    f.write(inner_html)
-                #print(len(inner_html))
+                
+                #判斷內容是否過少:
                 if len(inner_html)<20000:
                     # 今日無數據或尚未更新
                     print("上櫃當日沖銷無數據或尚未更新...")
                     driver.quit()
-                    #time.sleep(2)
                     exit(0)
                     return True
                 else:
-                    tmp_url="https://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat_result.php?l=zh-tw&d="+ac_to_cc(tmp_day)+"&s=0,asc,0&o=htm"
-                    driver.get(tmp_url)
-                    time.sleep(5)
-                    div_element = driver.find_element(By.TAG_NAME, 'html')
-                    inner_html = div_element.get_attribute('innerHTML')
                     soup = BeautifulSoup(inner_html, 'html.parser')
                     target_table = soup.select_one('table#intraday_trading_stat_result tbody')
-
+    
                     cells=[]
                     for row in target_table.find_all('tr'):
                         cells.append( row )
@@ -351,7 +342,7 @@ if __name__ == "__main__":
     url_dict={
     "證交所首頁":"https://www.twse.com.tw/zh/index.html",
     "證交所每日當日沖銷交易標的":"https://www.twse.com.tw/zh/trading/day-trading.html",
-    "上櫃現股當沖":"https://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat.php?l=zh-tw"
+    "上櫃現股當沖":"https://www.tpex.org.tw/zh-tw/mainboard/trading/day-trading/statistics/day.html"
     }
     run_count=0
     pause_second=20

@@ -2,10 +2,13 @@
 
 每日當沖下載改為使用 chromedriver 以規避交易所的封鎖
 
+## fix logs:
+* 2024-10-29 櫃買中心網頁改版造成爬蟲失敗 分析後修正
+
 ## used links:
 "證交所首頁":"https://www.twse.com.tw/zh/index.html",
 "證交所每日當日沖銷交易標的":"https://www.twse.com.tw/zh/trading/day-trading.html",
-"上櫃現股當沖":"https://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat.php?l=zh-tw"
+"上櫃現股當沖":"https://www.tpex.org.tw/zh-tw/mainboard/trading/day-trading/statistics/day.html"
 
 ## action分析:
 

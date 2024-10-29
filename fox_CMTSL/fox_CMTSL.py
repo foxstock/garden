@@ -69,36 +69,18 @@ def scrapy():
         options.add_argument("--disable-notifications")
         options.add_argument("--disable-gps")
         driver = webdriver.Chrome(service=service, options=options)
-        try:
-            if config['SETTING.twse_home_skip']: driver.set_page_load_timeout(5)
-            driver.get(url_dict["證交所首頁"])
-        except:
-            if config['SETTING.twse_home_skip']: driver.set_page_load_timeout(10)
-            driver.get(url_dict["證交所融券借券賣出餘額"])
-        if config['SETTING.twse_home_skip']: driver.set_page_load_timeout(10)
+        #try:
+        #    if config['SETTING.twse_home_skip']: driver.set_page_load_timeout(5)
+        #    driver.get(url_dict["證交所首頁"])
+        #except:
+        #    if config['SETTING.twse_home_skip']: driver.set_page_load_timeout(10)
+        #    driver.get(url_dict["證交所融券借券賣出餘額"])
+        #if config['SETTING.twse_home_skip']: driver.set_page_load_timeout(10)
         driver.get(url_dict["證交所融券借券賣出餘額"])
 
-        time.sleep(3)
-        # 使用 By 類別來定位名稱為 'yy' 的 select 元素
-        select_element = Select(driver.find_element(By.NAME, 'yy'))
-        select_element.select_by_value(yy)
+        time.sleep(5)
 
-        time.sleep(1)
-
-        # 使用 By 類別來定位名稱為 'mm' 的 select 元素
-        select_element = Select(driver.find_element(By.NAME, 'mm'))
-        select_element.select_by_value(mm)
-
-        time.sleep(1)
-
-        # 使用 By 類別來定位名稱為 'dd' 的 select 元素
-        select_element = Select(driver.find_element(By.NAME, 'dd'))
-        select_element.select_by_value(dd)
-
-        time.sleep(1)
-
-        btn_element = driver.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/main/form/div/div[2]/button')
-        btn_element.click()
+        driver.get(f"https://www.twse.com.tw/rwd/zh/marginTrading/TWT93U?date={today_str}&response=html")
 
         time.sleep(5)
     
@@ -114,20 +96,8 @@ def scrapy():
             exit(0)
             return True
 
-        select_element = Select(driver.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/main/div[2]/hgroup/div/div[1]/select'))  
-        # 選擇 value 為 'All' 的選項
-        select_element.select_by_value('-1')
-
-        time.sleep(5)
-
-        # 定位到 class 名稱為 'rwd-table dragscroll F2 R4_' 的 DIV 元素
-        table_element = driver.find_element(By.TAG_NAME, 'html')
-
-        # 取得該 DIV 元素的內容 HTML 原始碼
-        inner_html = table_element.get_attribute('innerHTML')
-
         soup = BeautifulSoup(inner_html, 'html.parser')
-        target_table = soup.select_one('div.main-content div.rwd-table table tbody')
+        target_table = soup.select_one('table tbody')
         final_ls=[]
         cells=[]
         for row in target_table.find_all('tr'):
@@ -137,30 +107,30 @@ def scrapy():
             final_ls.append([today_str,ls[0],remove_comma(ls[9]),remove_comma(ls[10]),remove_comma(ls[11]),remove_comma(ls[12]),remove_comma(ls[13]),'0'])
         # 上市ok
         driver.get(url_dict["上櫃融券借券賣出餘額"])
-        input_date = driver.find_element(By.NAME,'input_date')
-        #input_date.clear()
-        for _ in range(10):
-            input_date.send_keys(Keys.BACKSPACE)
-        input_date.send_keys(ac_to_cc(today_str))
-        input_date.send_keys(Keys.TAB)
         time.sleep(5)
 
-        # 定位到 html 元素
-        div_element = driver.find_element(By.TAG_NAME, 'html')
+        button = driver.find_element(By.XPATH,"//*[contains(text(),'列印/匯出HTML')]")
+        button.click() # 按下 列印/匯出HTML
 
-        # 取得該 DIV 元素的內容 HTML 原始碼
-        inner_html = div_element.get_attribute('innerHTML')
-        if len(inner_html)<70000: 
-            print("上櫃融券借券賣出餘額無數據或尚未更新...")
-            driver.quit()
-            #exit(0)
-            return True
-        tmp_url=f"https://www.tpex.org.tw/web/stock/margin_trading/margin_sbl/margin_sbl_result.php?l=zh-tw&d={ac_to_cc(today_str)}&s=0,asc,0&o=htm"
+        driver.switch_to.window(driver.window_handles[1])
+
+        yy=today_str[0:4]
+        mm=today_str[4:6]
+        dd=today_str[6:8]
+
+        tmp_url=f"https://www.tpex.org.tw/www/zh-tw/margin/sbl?date={yy}%2F{mm}%2F{dd}&id=&response=html"
 
         driver.get(tmp_url)
         time.sleep(5)
         div_element = driver.find_element(By.TAG_NAME, 'html')
         inner_html = div_element.get_attribute('innerHTML')
+        
+        if len(inner_html)<70000: 
+            print("上櫃融券借券賣出餘額無數據或尚未更新...")
+            driver.quit()
+            #exit(0)
+            return True
+
         soup = BeautifulSoup(inner_html, 'html.parser')
         target_table = soup.select_one('body table tbody')
 
@@ -268,7 +238,7 @@ if __name__ == "__main__":
     url_dict={
         "證交所首頁":"https://www.twse.com.tw/zh/index.html",
         "證交所融券借券賣出餘額":"https://www.twse.com.tw/zh/trading/margin/twt93u.html",
-        "上櫃融券借券賣出餘額":"https://www.tpex.org.tw/web/stock/margin_trading/margin_sbl/margin_sbl.php?l=zh-tw"
+        "上櫃融券借券賣出餘額":"https://www.tpex.org.tw/zh-tw/mainboard/trading/margin-trading/sbl.html"
     }
     run_count=0
     pause_second=20

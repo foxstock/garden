@@ -46,8 +46,14 @@ def step1():
         else:
             raise"""
     #last3monthDay
+
+    #"https://index.ndc.gov.tw/n/excel/data/eco/indicators?sy=2023&sm=10&ey=2024&em=10&id=2%2C12%2C14%2C26%2C34&sq=0,0,0&file_type=xls"
+
+    cy=str(currDay.year)
+    cm=str(currDay.month)
+
     url_list=[
-    ["TWBID"+str(currDay.year)+str(currDay.month)+".xls","https://index.ndc.gov.tw/n/excel/data/eco/indicators?sy=%s&sm=%s&ey=%s&em=%s"%('1984','01',str(currDay.year),str(currDay.month))+"&id=2%2C12%2C13%2C14%2C25%2C26%2C33%2C34&sq=0,0,0"],
+    ["TWBID"+str(currDay.year)+str(currDay.month)+".xls",f"https://index.ndc.gov.tw/n/excel/data/eco/indicators?sy=1984&sm=01&ey={cy}&em={cm}&id=2%2C12%2C14%2C26%2C34&sq=0,0,0&file_type=xls"],
     ["TWPMI"+str(currDay.year)+str(currDay.month)+".xls","https://index.ndc.gov.tw/n/excel/data/PMI/total?sy=%s&sm=%s&ey=%s&em=%s"%('2012','07',str(currDay.year),str(currDay.month))+"&id=55%2C56%2C57%2C58%2C59%2C60%2C61%2C62%2C63%2C64%2C65%2C66&sq=0,0,0"],
     ["TWNMI"+str(currDay.year)+str(currDay.month)+".xls","https://index.ndc.gov.tw/n/excel/data/NMI/total?sy=%s&sm=%s&ey=%s&em=%s"%('2014','08',str(currDay.year),str(currDay.month))+"&id=160%2C161%2C162%2C163%2C164%2C165%2C166%2C167%2C168%2C169%2C170%2C171%2C172&sq=0,0,0"]
     ]

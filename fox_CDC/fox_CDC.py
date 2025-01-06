@@ -207,8 +207,15 @@ def scrapy():
         for tmp_day in last3days:
             try:
                 yy=tmp_day[0:4]
-                mm=str(int(tmp_day[4:6]))
-                dd=str(int(tmp_day[6:8]))
+                if int(tmp_day[4:6])<10:
+                    mm='0'+str(int(tmp_day[4:6]))
+                else:
+                    mm=str(int(tmp_day[4:6]))
+                if int(tmp_day[6:8])<10:
+                    dd='0'+str(int(tmp_day[6:8]))
+                else:
+                    dd=str(int(tmp_day[6:8]))
+                # print(f"{yy}-{mm}-{dd}")
 
                 driver.get(f"https://www.tpex.org.tw/www/zh-tw/intraday/stat?type=Daily&date={yy}%2F{mm}%2F{dd}&id=&response=html")
                 time.sleep(5)

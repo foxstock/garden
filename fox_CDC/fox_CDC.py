@@ -14,6 +14,10 @@ from selenium.webdriver.common.keys import Keys
 
 from bs4 import BeautifulSoup
 
+import mouse
+from win32 import win32api,win32gui,win32print
+import win32con
+
 def ini_to_dict(ini_loc):
     config = configparser.ConfigParser(allow_no_value=True)
     config.read(ini_loc,encoding='utf-8')
@@ -353,6 +357,10 @@ if __name__ == "__main__":
     }
     run_count=0
     pause_second=20
+    hDC = win32gui.GetDC(0)
+    dw=win32print.GetDeviceCaps(hDC, win32con.DESKTOPHORZRES)
+    dh=win32print.GetDeviceCaps(hDC, win32con.DESKTOPVERTRES)
+    mouse.move(int(dw/2),dh)
     while 1:
         result=scrapy()
         run_count=run_count+1

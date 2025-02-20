@@ -203,11 +203,12 @@ def scrapy():
         time.sleep(5)
         
         # 處理上櫃現股當沖
-        driver.get(url_dict["上櫃現股當沖"])
-        time.sleep(5)
-        button = driver.find_element(By.XPATH,"//*[contains(text(),'列印/匯出HTML')]")
-        button.click() #按下 列印/匯出HTML
-        driver.switch_to.window(driver.window_handles[1])
+        ## edit on 2025/02/20
+        ##driver.get(url_dict["上櫃現股當沖"])
+        ##time.sleep(5)
+        ##button = driver.find_element(By.XPATH,"//*[contains(text(),'列印/匯出HTML')]")
+        ##button.click() #按下 列印/匯出HTML
+        ##driver.switch_to.window(driver.window_handles[1])
         for tmp_day in last3days:
             try:
                 yy=tmp_day[0:4]
